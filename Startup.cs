@@ -22,11 +22,13 @@ namespace TeamCollaborationApp
 
         public IConfiguration Configuration { get; }
 
+        private const string DefaultCorsPolicyName = "localhost";
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-
+           
             // In production, the Angular files will be served from this directory
             //services.AddSpaStaticFiles(configuration =>
             //{
@@ -45,6 +47,19 @@ namespace TeamCollaborationApp
             .AddTransient<IVideoService, VideoService>();
             //.AddSpaStaticFiles(config => config.RootPath = "ClientApp");
 
+            services.AddCors(options =>
+            {
+                options.AddPolicy(DefaultCorsPolicyName,
+                    builder =>
+                    {
+                        builder.WithOrigins("http://localhost:4200")
+                               .AllowAnyHeader()
+                               .AllowAnyMethod()
+                               .SetIsOriginAllowed((x) => true)
+                               .AllowCredentials();
+                    });
+            });
+
             services.AddSignalR();
             /*******/
 
@@ -62,11 +77,13 @@ namespace TeamCollaborationApp
                 app.UseExceptionHandler("/Error");
                 app.UseHsts();
             }
-
+            
+           
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             //app.UseSpaStaticFiles();
 
+            app.UseCors(DefaultCorsPolicyName);
             /*******/
             app.UseSignalR(routes =>
             {

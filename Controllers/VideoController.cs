@@ -1,9 +1,11 @@
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using TeamCollaborationApp.Abstractions;
 
 namespace TeamCollaborationApp.Controllers
 {
+    [EnableCors("AllowAll")]
     [
         ApiController,
         Route("api/video")
