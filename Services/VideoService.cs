@@ -2,17 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using TeamCollaborationApp.Abstractions;
-using TeamCollaborationApp.Models;
-using TeamCollaborationApp.Options;
 using Twilio;
 using Twilio.Base;
 using Twilio.Jwt.AccessToken;
 using Twilio.Rest.Video.V1;
 using Twilio.Rest.Video.V1.Room;
 using ParticipantStatus = Twilio.Rest.Video.V1.Room.ParticipantResource.StatusEnum;
+using VideoChat.Abstractions;
+using VideoChat.Options;
+using VideoChat.Models;
 
-namespace TeamCollaborationApp.Services
+namespace VideoChat.Services
 {
     public class VideoService : IVideoService
     {
@@ -32,7 +32,7 @@ namespace TeamCollaborationApp.Services
                          _twilioSettings.ApiKey,
                          _twilioSettings.ApiSecret,
                          identity ?? Guid.NewGuid().ToString(),
-                         grants: new HashSet<IGrant> { new VideoGrant(), new ChatGrant() { ServiceSid = _twilioSettings.ChatServiceSid } }).ToJwt();
+                         grants: new HashSet<IGrant> { new VideoGrant() }).ToJwt();
 
         public async Task<IEnumerable<RoomDetails>> GetAllRoomsAsync()
         {

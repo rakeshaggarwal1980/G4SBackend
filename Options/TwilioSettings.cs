@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace TeamCollaborationApp.Options
+namespace VideoChat.Options
 {
     public class TwilioSettings
     {
@@ -22,9 +22,6 @@ namespace TeamCollaborationApp.Options
         /// </summary>
         public string ApiSecret { get; set; }
 
-        /// <summary>
-        /// Required for Chat
-        /// </summary>
         public string ChatServiceSid { get; set; }
     }
 }

@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using TeamCollaborationApp.Models;
+using VideoChat.Models;
 
-namespace TeamCollaborationApp.Abstractions
+namespace VideoChat.Abstractions
 {
     public interface IVideoService
     {

@@ -1,17 +1,15 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using System;
-using TeamCollaborationApp.Abstractions;
-using TeamCollaborationApp.Hubs;
-using TeamCollaborationApp.Options;
-using TeamCollaborationApp.Services;
+using VideoChat.Abstractions;
+using VideoChat.Hubs;
+using VideoChat.Options;
+using VideoChat.Services;
 
-namespace TeamCollaborationApp
+namespace VideoChat
 {
     public class Startup
     {
@@ -25,15 +23,10 @@ namespace TeamCollaborationApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddControllersWithViews();
 
-            // In production, the Angular files will be served from this directory
-            //services.AddSpaStaticFiles(configuration =>
-            //{
-            //    configuration.RootPath = "ClientApp/dist";
-            //});
+            services.AddControllersWithViews();
 
-            /*******/
             services.Configure<TwilioSettings>(
                 settings =>
                 {
@@ -42,16 +35,14 @@ namespace TeamCollaborationApp
                     settings.ApiKey = "SK24c672067c60c99757607f5a14ece7b0"; //Environment.GetEnvironmentVariable("TWILIO_API_KEY");
                     settings.ChatServiceSid = "ISfe08e187504b453d819fff6d4343bf8a";
                 })
-            .AddTransient<IVideoService, VideoService>();
-            //.AddSpaStaticFiles(config => config.RootPath = "ClientApp");
-
+                .AddTransient<IVideoService, VideoService>();
+                
             services.AddSignalR();
-            /*******/
 
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -60,39 +51,23 @@ namespace TeamCollaborationApp
             else
             {
                 app.UseExceptionHandler("/Error");
+                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-            //app.UseSpaStaticFiles();
 
-            /*******/
-            app.UseSignalR(routes =>
+            app.UseRouting();
+
+            app.UseEndpoints(endpoints =>
             {
-                routes.MapHub<NotificationHub>("/notificationHub");
+                endpoints.MapControllerRoute(
+                name: "default",
+                pattern: "{controller}/{action=Index}/{id?}");
+
+                endpoints.MapHub<NotificationHub>("/notificationHub");
             });
-            /*******/
-
-            app.UseMvc(routes =>
-            {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller}/{action=Index}/{id?}");
-            });
-
-            //app.UseSpa(spa =>
-            //{
-            //    // To learn more about options for serving an Angular SPA from ASP.NET Core,
-            //    // see https://go.microsoft.com/fwlink/?linkid=864501
-
-            //    spa.Options.SourcePath = "ClientApp";
-
-            //    if (env.IsDevelopment())
-            //    {
-            //        spa.UseAngularCliServer(npmScript: "start");
-            //    }
-            //});
         }
     }
 }
